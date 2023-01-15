@@ -46,8 +46,8 @@ public class StompMessagingProtocolImp implements StompMessagingProtocol<String>
                 connections.send(connectionId, output.frameToString());
             else if (output.getCommand().equals("ERROR")) {
                 connections.send(connectionId, output.frameToString());
-                shouldterminate = true;
                 connections.disconnect(connectionId, userName);
+                shouldterminate = true;
             }
         }
     }

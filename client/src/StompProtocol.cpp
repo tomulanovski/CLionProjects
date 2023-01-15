@@ -5,7 +5,7 @@ string StompProtocol::keyboardProcess(string message) {
     vector<string> words;
     stringstream stream(message);
     string word;
-    string out;
+    string out="write a valid command";
     while (stream >> word) {
         words.push_back(word);
     }
@@ -16,16 +16,22 @@ string StompProtocol::keyboardProcess(string message) {
             out = Login(words);
     }
     else { //client is connected
-        if (words[0]=="join")
+       if(mhandler->isConnected() && words[0] == "login" )
+          out = "Client is already logged in";
+       else if (words[0]=="join" && words.size()==2)
             out = join(words);
-       else if (words[0]=="exit")
+       else if (words[0]=="exit" && words.size()==2)
             out = exit(words);
-       else if (words[0]=="report")
+       else if (words[0]=="report" && words.size()==2)
            out = report(words);
-       else if (words[0]=="logout")
+       else if (words[0]=="logout" && words.size()==1)
            out = logout(words);
-       else if (words[0]=="summary")
+       else if (words[0]=="summary" && words.size()==4)
             summary(words);
+    }
+    if (out=="write a valid command" || out=="Client is already logged in") {
+      cout<<out<<endl;
+      out="";
     }
     return out;
 }
