@@ -76,11 +76,11 @@ return "";
 }
 }
 string StompProtocol::report(vector<string> input) {
-names_and_events namesAndEvents = parseEventsFile("data/input[1]");
+names_and_events namesAndEvents = parseEventsFile(input[1]);
 vector<Event> events = namesAndEvents.events;
 for (int i=0;(unsigned)i<events.size();i++) {
     string out = "SEND";
-    string topic = "destination:" + events[i].get_team_a_name() + "_" + events[i].get_team_b_name();
+    string topic = events[i].get_team_a_name() + "_" + events[i].get_team_b_name();
     string eventName = events[i].get_name();
     string time = to_string(events[i].get_time());
     map<string,string> GeneralUpdates = events[i].get_game_updates();
@@ -98,11 +98,11 @@ for (int i=0;(unsigned)i<events.size();i++) {
     for (pair<string,string> update: TeamBUpdates) {
         TeamBStr = TeamBStr + update.first +  ':' +update.second + '\n';
     }
-    string description = "description:\n" + events[i].get_discription();
-    out = out + '\n' + topic +"\n\n" + "user:" + username + '\n' + "team a:" +
+    string description = events[i].get_discription();
+    out = out + '\n' + "destination:/" + topic +"\n\n" + "user:" + username + '\n' + "team a:" +
             events[i].get_team_a_name() + '\n' + "team b:" + events[i].get_team_b_name() +'\n' +
             "event name:" + eventName + '\n' + "time:" + time + '\n' + GeneralUpdatesStr + TeamAstr +
-            TeamBStr + description + '\0';
+            TeamBStr + "description:\n" + description + '\0';
     mhandler->sendFrameAscii(out,'\0');
 }
     return "";
@@ -145,9 +145,11 @@ void StompProtocol::removeSubscription(string topic) {
 }
 void StompProtocol::ServerProcess(string msg) {
     if(msg.find('\n')==0) msg = msg.substr(1);
-    string command = msg.substr(0,msg.find('\n'));
-    string headers = msg.substr(msg.find('\n') +1, msg.find("\n\n"));
-    string body = msg.substr(msg.find("\n\n")+2);
+    int endCommand = msg.find('\n');
+    int endHeaders = msg.find("\n\n");
+    string command = msg.substr(0,endCommand);
+    string headers = msg.substr(endCommand +1, endHeaders);
+    string body = msg.substr(endHeaders+2);
     if (command=="CONNECTED")
         cout<<"successfully logged in"<<endl;
     else if (command=="RECEIPT")
@@ -184,11 +186,12 @@ void StompProtocol::receipt(string headers) {
         mhandler->close();
     }
     void StompProtocol::message(string headers , string body) {
+    headers = headers.substr(0,headers.find("\n\n"));
     unordered_map<string,string> generalStats;
     unordered_map<string,string> teamAStats;
     unordered_map<string,string> teamBStats;
     unordered_map<string,string> organizedBody;
-    string toCut = body.substr(body.find("general game updates:") +21 ,body.find("team a updates:"));
+    string toCut = body.substr(body.find("general game updates:") +22 ,body.find("team a updates:"));
     generalStats = stringToMap(toCut);
     toCut = body.substr(body.find("team a updates:")+15 , body.find("team b updates:"));
     teamAStats = stringToMap(toCut);

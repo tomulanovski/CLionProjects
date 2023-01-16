@@ -37,7 +37,7 @@ public class Frame {
     public static Frame MessageFrame(String destination, String body) {
         Frame outputFrame = new Frame("MESSAGE");
         outputFrame.header = "destination:" + destination + "\n" +
-                "message-id" + outputFrame.FrameId + "\n\n";
+                "message-id:" + outputFrame.FrameId + "\n\n";
         outputFrame.body = body +'\n';
         return outputFrame;
     }

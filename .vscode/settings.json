@@ -60,7 +60,18 @@
         "typeinfo": "cpp",
         "utility": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.ipp": "cpp",
+        "algorithm": "cpp",
+        "cassert": "cpp",
+        "cerrno": "cpp",
+        "ciso646": "cpp",
+        "climits": "cpp",
+        "ios": "cpp",
+        "iterator": "cpp",
+        "locale": "cpp",
+        "queue": "cpp",
+        "random": "cpp"
     },
     "makefile.makefilePath": "client/"
 }
