@@ -80,6 +80,10 @@ return "";
 string StompProtocol::report(vector<string> input) {
 names_and_events namesAndEvents = parseEventsFile(input[1]);
 vector<Event> events = namesAndEvents.events;
+string topic = namesAndEvents.team_a_name + "_" + namesAndEvents.team_b_name;
+if (topicSubIdmap.count(topic)==0) 
+  cout<<"not subscribed to this game"<<endl;
+else {
 for (int i=0;(unsigned)i<events.size();i++) {
     string out = "SEND";
     string topic = events[i].get_team_a_name() + "_" + events[i].get_team_b_name();
@@ -107,7 +111,9 @@ for (int i=0;(unsigned)i<events.size();i++) {
             TeamBStr + "description:\n" + description + '\0';
     mhandler->sendFrameAscii(out,'\0');
 }
-    return "";
+}
+ return "";
+
 }
 string StompProtocol::logout(vector<string> input) {
 string out = "DISCONNECT";
@@ -150,6 +156,8 @@ int StompProtocol::getSubId(string topic) {
 void StompProtocol::removeSubscription(string topic) {
     if ( topicSubIdmap.count(topic)!=0)
         topicSubIdmap.erase(topic);
+    if (Games_UsersMap.count(topic)>0 && Games_UsersMap.at(topic).count(username)>0 )
+    Games_UsersMap.at(topic).erase(username);    
 }
 void StompProtocol::ServerProcess(string msg) {
     if(msg.find('\n')==0) msg = msg.substr(1);

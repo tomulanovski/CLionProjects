@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Frame {
     private static AtomicInteger FrameCount = new AtomicInteger(0);
-    private int FrameId;
     private String command;
     private String header;
     private String body;
@@ -13,9 +12,6 @@ public class Frame {
         this.command = command;
         header = "";
         body = "";
-        FrameCount.compareAndSet(FrameCount.intValue(), FrameCount.intValue() + 1);
-        FrameId = FrameCount.intValue();
-
     }
 
     public static Frame connectedFrame() {
@@ -37,7 +33,7 @@ public class Frame {
     public static Frame MessageFrame(String destination, String body) {
         Frame outputFrame = new Frame("MESSAGE");
         outputFrame.header = "destination:" + destination + "\n" +
-                "message-id:" + outputFrame.FrameId + "\n\n";
+                "message-id:" + Frame.add() + "\n\n";
         outputFrame.body = body +'\n';
         return outputFrame;
     }
@@ -56,6 +52,13 @@ public class Frame {
     }
     public String getCommand(){
         return command;
+    }
+    public static int add(){
+        int val;
+        do {
+            val = FrameCount.get();
+       } while (!FrameCount.compareAndSet(val, val+ 1));
+       return val;
     }
 
 

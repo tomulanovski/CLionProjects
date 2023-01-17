@@ -21,7 +21,6 @@ private:
     int disconnectReceipt;
     unordered_map<string,int> topicSubIdmap;
     unordered_map<string,pair<string,int>> ReceiptToSubIdMap;
-    // unordered_map<string,int> ReceiptToUnsubIdMap;
     unordered_map<string,unordered_map<string,Game>> Games_UsersMap;
     string Login(vector<string>);
     string join(vector<string>);

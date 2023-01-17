@@ -65,7 +65,7 @@ public class ConnectionsImpl implements Connections<String> {
             connectionsCounter--;
         }
         }
-    public void addConnection(ConnectionHandler<String> handler) {
+    public synchronized void addConnection(ConnectionHandler<String> handler) {
         connectionsCounter++;
         IdGenerator++;
         idHandlerMap.put(IdGenerator , handler);

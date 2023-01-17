@@ -8,7 +8,7 @@ public class StompMessagingProtocolImp implements StompMessagingProtocol<String>
     private boolean shouldterminate = false;
     private int connectionId;
     private ConnectionsImpl connections;
-    private boolean connected = false;
+    private volatile boolean connected = false;
     private String userName;
 
 
