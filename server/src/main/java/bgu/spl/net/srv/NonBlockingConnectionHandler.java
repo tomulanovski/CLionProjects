@@ -3,6 +3,8 @@ package bgu.spl.net.srv;
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
 import bgu.spl.net.api.StompMessagingProtocol;
+import bgu.spl.net.impl.stomp.StompMessageEncoderDecoder;
+import bgu.spl.net.impl.stomp.StompMessagingProtocolImp;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -17,15 +19,15 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
     private static final ConcurrentLinkedQueue<ByteBuffer> BUFFER_POOL = new ConcurrentLinkedQueue<>();
 
     private final StompMessagingProtocol protocol;
-    private final MessageEncoderDecoder encdec;
+    private final StompMessageEncoderDecoder encdec;
     private final Queue<ByteBuffer> writeQueue = new ConcurrentLinkedQueue<>();
     private final SocketChannel chan;
     private final Reactor reactor;
     private ConnectionsImpl connections;
 
     public NonBlockingConnectionHandler(
-            MessageEncoderDecoder<String> reader,
-            StompMessagingProtocol<String> protocol,
+            StompMessageEncoderDecoder reader,
+            StompMessagingProtocolImp protocol,
             SocketChannel chan,
             Reactor reactor ,
             ConnectionsImpl connections) {
@@ -54,7 +56,7 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
                     protocol.start(connections.getHandlerId(this),connections);
                     while (buf.hasRemaining()) {
                         String nextMessage = (String) encdec.decodeNextByte(buf.get());
-                        if (nextMessage != null) {
+                        if (nextMessage != null && nextMessage.length()!=0) {
                              protocol.process(nextMessage);
                         }
                     }

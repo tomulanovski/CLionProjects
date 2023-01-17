@@ -4,6 +4,7 @@ import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
 import bgu.spl.net.api.StompMessagingProtocol;
 import bgu.spl.net.impl.stomp.StompMessageEncoderDecoder;
+import bgu.spl.net.impl.stomp.StompMessagingProtocolImp;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,7 +19,7 @@ import java.util.function.Supplier;
 public class Reactor<T> implements Server<T> {
 
     private final int port;
-    private final Supplier<StompMessagingProtocol> protocolFactory;
+    private final Supplier<StompMessagingProtocolImp> protocolFactory;
     private final Supplier<StompMessageEncoderDecoder> readerFactory;
     private final ActorThreadPool pool;
     private Selector selector;
@@ -31,7 +32,7 @@ public class Reactor<T> implements Server<T> {
     public Reactor(
             int numThreads,
             int port,
-            Supplier<StompMessagingProtocol> protocolFactory,
+            Supplier<StompMessagingProtocolImp> protocolFactory,
             Supplier<StompMessageEncoderDecoder> readerFactory) {
 
         this.pool = new ActorThreadPool(numThreads);
