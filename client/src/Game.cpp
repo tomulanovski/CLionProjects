@@ -16,15 +16,15 @@ events = events + event;
 }
 string Game::PrintSummary() {
     int index = GameName.find('_');
-    string toPrint = GameName.substr(0,index) + "vs "+ GameName.substr(index+1) + "\nGame stats:\n";
+    string toPrint = GameName.substr(0,index) + " vs "+ GameName.substr(index+1) + "\nGame stats:\n";
     for (auto i:General_UpdatesMap) {
         toPrint = toPrint + i.first + ":" + i.second + '\n';
     }
-    toPrint = toPrint + GameName.substr(0,index) + " stats:'\n";
+    toPrint = toPrint + GameName.substr(0,index) + " stats:\n";
     for (auto i:teamAStats) {
         toPrint = toPrint + i.first + ":" + i.second + '\n';
     }
-    toPrint = toPrint + GameName.substr(index+1)+ " stats:'\n";
+    toPrint = toPrint + GameName.substr(index+1)+ " stats:\n";
     for (auto i:teamBStats) {
         toPrint = toPrint + i.first + ":" + i.second + '\n';
     }

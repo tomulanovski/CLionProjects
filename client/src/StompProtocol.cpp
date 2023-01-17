@@ -26,8 +26,10 @@ string StompProtocol::keyboardProcess(string message) {
            out = report(words);
        else if (words[0]=="logout" && words.size()==1)
            out = logout(words);
-       else if (words[0]=="summary" && words.size()==4)
+       else if (words[0]=="summary" && words.size()==4) {
             summary(words);
+            out="";
+       }
     }
     if (out=="write a valid command" || out=="Client is already logged in") {
       cout<<out<<endl;
@@ -116,6 +118,11 @@ return out;
 }
 
 void StompProtocol::summary(vector<string> input) {
+if (Games_UsersMap.count(input[1])==0)
+   cout<<"no such game"<<endl;
+else if(Games_UsersMap.at(input[1]).count(input[2])==0)
+    cout<<"no reports to this game from this user"<<endl;
+else {       
 string toPrint = Games_UsersMap.at(input[1]).at(input[2]).PrintSummary();
 ofstream stream;
 stream.open(input[3] , ios::trunc);
@@ -131,6 +138,7 @@ else {
     }
     else
         cout<<"couldn't create the file"<<endl;
+}
 }
 }
 void StompProtocol::addSubscription(int subId, string Topic) {
@@ -192,10 +200,13 @@ void StompProtocol::receipt(string headers) {
     unordered_map<string,string> teamBStats;
     unordered_map<string,string> organizedBody;
     string toCut = body.substr(body.find("general game updates:") +22 ,body.find("team a updates:"));
+    toCut = toCut.substr(0,toCut.find("team a updates:"));
     generalStats = stringToMap(toCut);
-    toCut = body.substr(body.find("team a updates:")+15 , body.find("team b updates:"));
+    toCut = body.substr(body.find("team a updates:")+16 , body.find("team b updates:"));
+    toCut = toCut.substr(0,toCut.find("team b updates:"));
     teamAStats = stringToMap(toCut);
-    toCut = body.substr(body.find("team b updates:")+15 , body.find("description:"));
+    toCut = body.substr(body.find("team b updates:")+16 , body.find("description:"));
+    toCut = toCut.substr(0,toCut.find("description:"));
     teamBStats = stringToMap(toCut);
     organizedBody = stringToMap(body);
     string GameName = organizedBody.at("team a") + "_" + organizedBody.at("team b");
@@ -225,9 +236,9 @@ void StompProtocol::receipt(string headers) {
 unordered_map<string,string> StompProtocol::stringToMap(string toCut) {
    unordered_map<string,string> outputMap;
     int LineIndex = toCut.find('\n');
-    while ((unsigned)LineIndex != string::npos) {
+    while (LineIndex != -1) {
         int cutIndex = toCut.find(':');
-        outputMap.insert(pair<string,string>(toCut.substr(0,cutIndex),toCut.substr(cutIndex+1,LineIndex)));
+        outputMap.insert(pair<string,string>(toCut.substr(0,cutIndex),toCut.substr(cutIndex+1,LineIndex-(cutIndex+1))));
         toCut = toCut.substr(LineIndex+1);
         LineIndex = toCut.find('\n');
     }
