@@ -18,7 +18,7 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
     private static final int BUFFER_ALLOCATION_SIZE = 1 << 13; //8k
     private static final ConcurrentLinkedQueue<ByteBuffer> BUFFER_POOL = new ConcurrentLinkedQueue<>();
 
-    private final StompMessagingProtocol protocol;
+    private final StompMessagingProtocolImp protocol;
     private final StompMessageEncoderDecoder encdec;
     private final Queue<ByteBuffer> writeQueue = new ConcurrentLinkedQueue<>();
     private final SocketChannel chan;
@@ -52,8 +52,10 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
             buf.flip();
             return () -> {
                 try {
+                    if (!protocol.isConnected()) {
                     connections.addConnection(this); //adding client to connections
                     protocol.start(connections.getHandlerId(this),connections);
+                    }
                     while (buf.hasRemaining()) {
                         String nextMessage = (String) encdec.decodeNextByte(buf.get());
                         if (nextMessage != null && nextMessage.length()!=0) {
@@ -125,4 +127,5 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<String> {
         writeQueue.add(ByteBuffer.wrap(encdec.encode(msg)));
         reactor.updateInterestedOps(chan, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
     }
+
 }

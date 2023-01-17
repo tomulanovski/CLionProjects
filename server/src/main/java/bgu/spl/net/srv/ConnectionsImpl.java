@@ -71,6 +71,10 @@ public class ConnectionsImpl implements Connections<String> {
         idHandlerMap.put(IdGenerator , handler);
         HandlerIdMap.put(handler , IdGenerator);
     }
+    public boolean containsHandler(ConnectionHandler<String> handler){
+        if (HandlerIdMap.contains(handler)) return true;
+        else return false;
+    }
     public Integer getHandlerId(ConnectionHandler<String> handler) {
         return HandlerIdMap.get(handler);
     }

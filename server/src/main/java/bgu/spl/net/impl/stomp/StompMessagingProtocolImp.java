@@ -150,4 +150,7 @@ public class StompMessagingProtocolImp implements StompMessagingProtocol<String>
         }
         return headers;
     }
+    public boolean isConnected() {
+        return connected;
+    }
 }
